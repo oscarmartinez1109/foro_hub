@@ -1,1 +1,7 @@
-api/src/main/resources/application.properties
+# api/src/main/resources/application.properties
+
+git add api/src/main/resources/application.properties
+git commit -m "Update application.properties to use environment variables"
+
+
+XXx
