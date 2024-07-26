@@ -28,9 +28,11 @@ public class TopicoController {
         System.out.println(datosRegistroTopico);
         LocalDate requestDate = LocalDate.now();
         Topico topico = topicoRepository.save(new Topico(datosRegistroTopico, requestDate));
+
         DatosRespuestaTopico datosRespuestaTopico = new DatosRespuestaTopico(topico.getId(),
                 topico.getIdUsuario(), topico.getTitulo(), topico.getMensaje(),
                 topico.getNombreCurso(), requestDate);
+
         URI url = uriComponentsBuilder.path("/topicos/{id}").buildAndExpand(topico.getId()).toUri();
         return ResponseEntity.created(url).body(datosRespuestaTopico);
     }
@@ -38,6 +40,17 @@ public class TopicoController {
     @GetMapping
     public ResponseEntity<Page<DatosListadoTopico>> listadoTopico(@PageableDefault(size = 8) Pageable paginacion) {
         return ResponseEntity.ok(topicoRepository.findAll(paginacion).map(DatosListadoTopico::new));
+    }
+
+    @PutMapping
+    @Transactional
+    public ResponseEntity actualizarTopico(@RequestBody @Valid DatosActualizarTopico datosActualizarTopico){
+        Topico topico = topicoRepository.getReferenceById(datosActualizarTopico.id());
+        topico.actulizarTopico(datosActualizarTopico);
+
+        return ResponseEntity.ok(new DatosRespuestaTopico(topico.getId(),
+                topico.getIdUsuario(), topico.getTitulo(), topico.getMensaje(),
+                topico.getNombreCurso(), topico.getFecha()));
     }
 
     @DeleteMapping("/{id}")
